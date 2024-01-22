@@ -1,5 +1,5 @@
 FROM arm32v6/busybox:latest
-LABEL maintainer "jbremmer"
+LABEL maintainer="oppermax"
 
 COPY prometheus                             /bin/prometheus
 COPY promtool                               /bin/promtool
@@ -7,9 +7,13 @@ COPY prometheus.yml                         /etc/prometheus/prometheus.yml
 COPY console_libraries/                     /usr/share/prometheus/console_libraries/
 COPY consoles/                              /usr/share/prometheus/consoles/
 
-RUN ln -s /usr/share/prometheus/console_libraries /usr/share/prometheus/consoles/ /etc/prometheus/
-RUN mkdir -p /prometheus && \
-    chown -R nobody:nogroup etc/prometheus /prometheus
+# Copy the default configuration
+COPY prometheus.yml                         /etc/prometheus/prometheus.yml
+
+
+# Fix the symbolic link creation
+RUN ln -s /usr/share/prometheus/console_libraries /usr/share/prometheus/consoles && \
+    mkdir -p /prometheus
 
 USER       nobody
 EXPOSE     9090
