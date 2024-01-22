@@ -1,33 +1,79 @@
 # prometheus-docker-armv6
 Prometheus docker for ARMv6
 
-Take the latest release, like this one
+Check for the latest version of prometheus in their GitHub releases and adjust the version in the Makefile:
 
-https://github.com/prometheus/prometheus/releases/download/v2.2.1/prometheus-2.2.1.linux-armv6.tar.gz
+## Updating the image 
 
-unpack and place Dockerfile inside unpacked folder.
-
-Then build with
-
-```sudo docker build -t local/rpi-prom .```
-
-Then build target image with
-
-```
-FROM local/rpi-prom
-COPY ./prometheus.yml /etc/prometheus/prometheus.yml
+```Makefile
+VERSION = 2.30.3
 ```
 
-```sudo docker build -t local/rpi-prom .```
+Then run:
 
-Run image with
+```shell
+make docker-push
+```
 
-```sudo docker run -p 9090:9090 --name prometheus-rpi -d local/rpi-prom-monit```
+## Using the image
 
-In case of modifications
 
-```sudo docker rm -f prometheus-rpi```
+On your device, create a directory:
 
-```sudo docker rmi local/rpi-prom-monit```
+```shell
+mkdir prometheus-docker
+```
 
-...and start over.
+Create another directory for the prometheus configuration and data:
+
+```shell
+mkdir prometheus
+```
+
+Create a prometheus.yml file in the prometheus directory:
+
+```shell
+touch prometheus/prometheus.yml
+```
+
+Copy the basic config and adjust it to your needs:
+
+```yaml
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+```
+
+Copy the docker-compose.yml file to your ArmV6 device and run:
+
+```shell
+docker-compose up -d
+```
+
+Check your prometheus instance at http://HOST_IP:9090
