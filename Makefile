@@ -10,14 +10,16 @@ fetch-release:
 	tar -xzvf prometheus-$(VERSION).linux-armv6.tar.gz
 
 .PHONY: docker-build
-docker-build:
+docker-build: fetch-release
 	@echo "Building image"
 	@cp Dockerfile prometheus-$(VERSION).linux-armv6/
 	@docker buildx build -t $(OWNER)/$(SERVICE):$(DOCKER_IMAGE_TAG) --platform linux/arm/v6 prometheus-$(VERSION).linux-armv6
+	@docker buildx build -t $(OWNER)/$(SERVICE):$(VERSION) --platform linux/arm/v6 prometheus-$(VERSION).linux-armv6
 
 .PHONY: docker-push
 docker-push: docker-build
 	docker push $(OWNER)/$(SERVICE):$(DOCKER_IMAGE_TAG)
+	docker push $(OWNER)/$(SERVICE):$(VERSION)
 
 .PHONY: clear
 clear:
