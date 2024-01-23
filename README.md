@@ -17,6 +17,14 @@ make docker-push
 
 ## Using the image
 
+### Pulling the image
+
+```shell
+docker pull oppermax/prometheus-docker-armv6:latest
+```
+
+### Using docker-compose (recommended)
+
 
 On your device, create a directory:
 
