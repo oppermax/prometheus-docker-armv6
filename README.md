@@ -1,9 +1,9 @@
 # prometheus-docker-armv6
-Prometheus docker for ARMv6
-
-Check for the latest version of prometheus in their GitHub releases and adjust the version in the Makefile:
+Prometheus on Docker for ArmV6 devices like the Raspberry Pi Zero
 
 ## Updating the image 
+
+Check for the latest version of prometheus in their GitHub releases and adjust the version in the Makefile:
 
 ```Makefile
 VERSION = 2.30.3
